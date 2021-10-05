@@ -21,36 +21,17 @@ def findResolved(value):
             return True
     return False
 def firing_alert(request):
-    header = {'Authorization':request.headers['AUTHORIZATION']}
-    this = []
-    for alert in request.json['alerts']:
-        this.append(alert)
-    if request.json['status'] == 'firing':
-        if findResolved(this) == True:
-            for i in this:
-                if i['status'] == 'resolved':
-                    msg = "   RESOLVED \n" + i['annotations']['title']
-                    msg = {'message': msg}
-                    response = requests.post(LINE_NOTIFY_URL, headers=header, data=msg)
-        else:
-            for i in this:
-                if i['status'] == 'firing':
-                        msg = "   FIRING \n" + i['annotations']['description']
-                        msg = {'message': msg}
-                        response = requests.post(LINE_NOTIFY_URL, headers=header, data=msg)
-    else:
-        if findResolved(this) == False:
-            for i in this:
-                if i['status'] == 'firing':
-                        msg = "   FIRING \n" + i['annotations']['description']
-                        msg = {'message': msg}
-                        response = requests.post(LINE_NOTIFY_URL, headers=header, data=msg)
-        else:
-            for i in this:
-                if i['status'] == 'resolved':
-                    msg = "   RESOLVED \n" + i['annotations']['title']
-                    msg = {'message': msg}
-                    response = requests.post(LINE_NOTIFY_URL, headers=header, data=msg)
+     for alert in request.json['alerts']:
+       if request.json['status'] == 'firing' and alert['status'] == 'firing':
+            msg =  "    FIRING:\n" + alert['annotations']['description']
+            msg = {'message': msg}
+            response = requests.post(LINE_NOTIFY_URL, headers=header, data=msg)
+       elif request.json['status'] == 'resolved' and alert['status'] == 'firing':
+            msg =  "    FIRING:\n" + alert['annotations']['description']
+            msg = {'message': msg}
+            response = requests.post(LINE_NOTIFY_URL, headers=header, data=msg)
+       else:
+            print("none")
 @app.route('/')
 def index():
     """
