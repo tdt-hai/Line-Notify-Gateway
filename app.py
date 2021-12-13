@@ -23,16 +23,25 @@ def findResolved(value):
 def firing_alert(request):
      header = {'Authorization':request.headers['AUTHORIZATION']}
      for alert in request.json['alerts']:
-       if request.json['status'] == 'firing' and alert['status'] == 'firing':
+        if request.json['status'] == 'firing' and alert['status'] == 'firing':
             msg = alert['annotations']['description']
             msg = {'message': msg}
             response = requests.post(LINE_NOTIFY_URL, headers=header, data=msg)
-       elif request.json['status'] == 'resolved' and alert['status'] == 'firing':
+        elif request.json['status'] == 'firing' and alert['status'] == 'resolved':
             msg = alert['annotations']['description']
             msg = {'message': msg}
             response = requests.post(LINE_NOTIFY_URL, headers=header, data=msg)
-       else:
+        elif request.json['status'] == 'resolved' and alert['status'] == 'firing':
+            msg = alert['annotations']['description']
+            msg = {'message': msg}
+            response = requests.post(LINE_NOTIFY_URL, headers=header, data=msg)
+        elif request.json['status'] == 'resolved' and alert['status'] == 'resolved':
+            msg = alert['annotations']['description']
+            msg = {'message': msg}
+            response = requests.post(LINE_NOTIFY_URL, headers=header, data=msg)
+        else:
             print("none")
+
 @app.route('/')
 def index():
     """
