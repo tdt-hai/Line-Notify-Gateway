@@ -21,13 +21,14 @@ def findResolved(value):
             return True
     return False
 def firing_alert(request):
+     header = {'Authorization':request.headers['AUTHORIZATION']}
      for alert in request.json['alerts']:
        if request.json['status'] == 'firing' and alert['status'] == 'firing':
-            msg =  "    FIRING:\n" + alert['annotations']['description']
+            msg = alert['annotations']['description']
             msg = {'message': msg}
             response = requests.post(LINE_NOTIFY_URL, headers=header, data=msg)
        elif request.json['status'] == 'resolved' and alert['status'] == 'firing':
-            msg =  "    FIRING:\n" + alert['annotations']['description']
+            msg = alert['annotations']['description']
             msg = {'message': msg}
             response = requests.post(LINE_NOTIFY_URL, headers=header, data=msg)
        else:
